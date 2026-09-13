@@ -24,16 +24,6 @@
             "title": "Bluetooth Channel 2"
         },
         {
-            "name": "BT3",
-            "shortName": "BT3",
-            "title": "Bluetooth Channel 3"
-        },
-        {
-            "name": "BT4",
-            "shortName": "BT4",
-            "title": "Bluetooth Channel 4"
-        },
-        {
             "name": "NEXT_BT",
             "shortName": "Next\nBT",
             "title": "Switch to the next Bluetooth channel"
@@ -52,6 +42,11 @@
             "name": "SWITCH",
             "shortName": "Switch\nOutput",
             "title": "Switch default output mode between USB/BLE"
+        },
+        {
+            "name": "CLR_PEER",
+            "shortName": "Clear\nPeer",
+            "title": "Forget the bonded split peer (hold 5 s)"
         }
     ],
     "layouts": {

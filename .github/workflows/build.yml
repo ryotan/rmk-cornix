@@ -11,3 +11,4 @@ jobs:
     with:
       keyboard_toml_path: "keyboard.toml"
       vial_json_path: "vial.json"
+      rmk_version: "0.9"
