@@ -32,7 +32,7 @@ pin_a = "P1_04"
 pin_b = "P1_06"
 phase = "resolution"
 resolution = 4
-# Without the MCU pull-ups the encoder never registers a turn (verified 2026-09-13); the ZMK port pulls P1.04/P1.06 up as well
+# Without the MCU pull-ups the encoder never registers a turn (verified 2026-09-13, both halves); the ZMK port pulls P1.04/P1.06 up as well
 internal_pullup = true
 
 [[split.peripheral]]
@@ -50,15 +50,15 @@ pin_a = "P1_04"
 pin_b = "P1_06"
 phase = "resolution"
 resolution = 4
-# Without the MCU pull-ups the encoder never registers a turn (verified 2026-09-13); the ZMK port pulls P1.04/P1.06 up as well
-internal_pullup = true
+internal_pullup = true  # see the central encoder above
 
 [rmk]
 split_peripherals_num = 1
 debounce_time = 5
-# 3 profiles keep the User keycodes numbered like the official firmware:
-# User0-2 = BT0-2, User3 = next, User4 = prev, User5 = clear bond, User6 = USB/BLE, User7 = clear split peer
+# 3 profiles keep the User keycodes numbered like the official firmware (RMK derives them from this count):
+# User0-2 = BT0-2, User3 = next, User4 = prev, User5 = clear bond, User6 = USB/BLE, User7 = clear split peer (5 s hold only)
 ble_profiles_num = 3
+split_central_sleep_timeout_seconds = 600
 morse_max_num = 32
 max_patterns_per_key = 8
 combo_max_num = 32
@@ -99,10 +99,10 @@ layers = 10
 [[keymap.layer]]
 name = "QWERTY"
 keys = """
-Grave                                Q             W               E                        R                    T                      Y      U                    I                    O            P                     Minus
-Tab                                  MT(A, LCtrl)  MT(S, LAlt)     MT(D, LGui)              MT(F, LShift)        G                      H      MT(J, RShift)        MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
-Escape                               Z             X               C                        V                    B      F13      TD(3)  N      M                    Comma                Dot          Slash                 LeftBracket
-MT(No, LCtrl | LAlt | LGui, MODKEY)  TD(0)         CapsWordToggle  LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  TD(1)                  TD(2)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  No           TD(0)                 MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
+Grave                                Q             W               E                        R                    T                                             Y      U                    I                    O            P                     Minus
+Tab                                  MT(A, LCtrl)  MT(S, LAlt)     MT(D, LGui)              F                    G                                             H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
+MT(Escape, LShift, SHIFT)            Z             X               C                        V                    B                             F13      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, SHIFT)
+MT(No, LCtrl | LAlt | LGui, MODKEY)  TD(0)         CapsWordToggle  LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, SHIFT)                  TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  No           TD(0)                 MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
 """
 encoders = [["WM(RightBracket, RShift | RGui)", "WM(LeftBracket, RShift | RGui)"], ["WM(Equal, LGui)", "WM(Minus, LGui)"]]
 
@@ -178,10 +178,10 @@ _        Comma    Kp0  _    _    _                         _           _    _   
 [[keymap.layer]]
 name = "System"
 keys = """
-No     No  No  No  No  No                 No  No  No  No  No  No
+No     No  No  No  No  No                 No  No  No  No  No  User7
 User0  No  No  No  No  No                 No  No  No  No  No  No
-User1  No  No  No  No  No  User6      No  No  No  No  No  No  User3
-User2  No  No  No  No  No                 No  No  No  No  No  User4
+User1  No  No  No  No  No  User6      No  No  No  No  No  No  No
+User2  No  No  No  No  No                 No  No  No  No  No  User5
 """
 
 [behavior]
@@ -193,26 +193,33 @@ timeout = "50ms"
 [behavior.morse]
 # Default profile = the Vial QMK Settings of the snapshot
 enable_flow_tap = true
-prior_idle_time = "100ms"
+prior_idle_time = "200ms"
 permissive_hold = true
 unilateral_tap = true
 hold_timeout = "250ms"
 gap_timeout = "250ms"
+# Re-pressing a tap-hold key within this window after a tap repeats the tap key (Backspace, Space)
+quick_tap_timeout = "250ms"
 morses = [
   # TD(0) <- Vial TD0, tapping term 250
   { tap = "WM(Space, LCtrl | LShift | LAlt)", hold = "WM(No, LCtrl | LShift | LAlt)" },
   # TD(1) <- Vial TD1, tapping term 250
-  { tap = "Language2", hold = "MO(3)", double_tap = "Language2", hold_after_tap = "MO(4)", profile = "THUMB" },
+  { tap = "Language1", hold = "MO(3)", double_tap = "Language1", hold_after_tap = "MO(4)", profile = "THUMB_TD" },
   # TD(2) <- Vial TD2, tapping term 250
-  { tap = "Language1", hold = "MO(3)", double_tap = "Language1", hold_after_tap = "MO(4)", profile = "THUMB" },
-  # TD(3) <- Vial TD31, tapping term 250
-  { tap = "WM(Kc0, LGui)", hold = "TG(8)", double_tap = "OSL(9)" },
+  { tap = "WM(Kc0, LGui)", hold = "TG(8)", double_tap = "OSL(9)", profile = "TAPDANCE" },
 ]
 
 [behavior.morse.profiles]
-# Thumb keys: Flow Tap off, so a letter followed quickly by a thumb key still enters the layer
-THUMB = { enable_flow_tap = false, permissive_hold = true, unilateral_tap = true, hold_timeout = "250ms", gap_timeout = "250ms" }
+# Thumb keys: hold_on_other_press so the layer fires the instant a key is pressed while the thumb is held (Corne-like);
+# Flow Tap off (letter->thumb still enters the layer); a lone press becomes a hold after 250ms
+THUMB = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "250ms" }
+# Tap dances with a double-tap / tap-then-hold pattern: no quick tap, or the second press repeats the tap key;
+# off the thumbs Flow Tap is disabled too, since it also decides the tap early
+THUMB_TD = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "0ms" }
+# Shift holds: no quick tap, or a tap (Lang2, Esc, [) followed by a hold within 250 ms repeats the tap key instead of shifting
+SHIFT = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "0ms" }
+TAPDANCE = { enable_flow_tap = false, quick_tap_timeout = "0ms" }
 # Modifier-only keys (MT with an empty tap): hold decided by time alone after 20 ms
-MODKEY = { enable_flow_tap = false, normal_mode = true, unilateral_tap = false, hold_timeout = "20ms", gap_timeout = "20ms" }
+MODKEY = { enable_flow_tap = false, normal_mode = true, unilateral_tap = false, hold_timeout = "20ms", gap_timeout = "20ms", quick_tap_timeout = "0ms" }
 
 # <<< generated
