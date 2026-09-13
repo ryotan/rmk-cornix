@@ -397,6 +397,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f8f80099a98041a3d1622845c271458a2d73e688351bf3cb999266764b81d48"
 
 [[package]]
+name = "cornix-led"
+version = "0.1.0"
+
+[[package]]
 name = "cortex-m"
 version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2020,6 +2024,7 @@ version = "0.1.0"
 dependencies = [
  "bt-hci",
  "const-gen",
+ "cornix-led",
  "cortex-m",
  "cortex-m-rt",
  "defmt 1.1.1",

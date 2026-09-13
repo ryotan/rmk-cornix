@@ -15,7 +15,8 @@ own RMK firmware for Cornix, not to replicate the official firmware.
 
 # Notes
 
-- LED lighting is not supported.
+- WS2812 status LEDs show the BLE profile, split link, battery and charging state
+  (ported from [numachang/cornix-rmk-custom](https://github.com/numachang/cornix-rmk-custom), MIT).
 - Optimization on BLE or power consumption is not made.
 
 # Usage

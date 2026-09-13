@@ -1,0 +1,9 @@
+[package]
+name = "cornix-led"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Status LED logic for the Cornix RMK firmware: facts in, colours and the next wake-up out"
+publish = false
+
+[dependencies]

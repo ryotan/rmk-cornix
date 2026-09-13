@@ -7,6 +7,9 @@ readme = "README.md"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
+[workspace]
+members = ["led"]
+
 # Dependencies follow rmk-template/nrf52840_split for RMK 0.9.
 # rmkit copies this file over the template's when building from keyboard.toml.
 [dependencies]
@@ -50,6 +53,8 @@ defmt = "1"
 defmt-rtt = "1"
 panic-probe = { version = "1", features = ["print-defmt"] }
 static_cell = "2"
+# Status LED logic; dependency-free so it is unit-tested on the host (`mise run test`).
+cornix-led = { path = "led" }
 
 [build-dependencies]
 xz2 = "0.1.7"
