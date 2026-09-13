@@ -1,0 +1,53 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "clippy",
+      "pattern": [
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*(warning|warn|error)(?:\\x1b\\[[\\d;]+m)*(\\[(.*)\\])?(?:\\x1b\\[[\\d;]+m)*:(?:\\x1b\\[[\\d;]+m)* ([^\\x1b]*)(?:\\x1b\\[[\\d;]+m)*$",
+          "severity": 1,
+          "message": 4,
+          "code": 3
+        },
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*\\s*(?:\\x1b\\[[\\d;]+m)*\\s*--> (?:\\x1b\\[[\\d;]+m)*(.*):(\\d*):(\\d*)(?:\\x1b\\[[\\d;]+m)*$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "owner": "rustc",
+      "pattern": [
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*(error|warning|note)(?:\\x1b\\[[\\d;]+m)*(?:\\[(.*)\\])?(?:\\x1b\\[[\\d;]+m)*:(?:\\x1b\\[[\\d;]+m)* (.*)$",
+          "severity": 1,
+          "code": 2,
+          "message": 3
+        },
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*\\s*(?:\\x1b\\[[\\d;]+m)*\\s*--> (?:\\x1b\\[[\\d;]+m)*(.*):(\\d*):(\\d*)(?:\\x1b\\[[\\d;]+m)*$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "owner": "cargo",
+      "pattern": [
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*(?:error|warning)(?:\\x1b\\[[\\d;]+m)*:(?:\\x1b\\[[\\d;]+m)* (.*)$",
+          "message": 1
+        },
+        {
+          "regexp": "^(?:\\x1b\\[[\\d;]+m)*\\s*(?:\\x1b\\[[\\d;]+m)*\\s*--> (?:\\x1b\\[[\\d;]+m)*(.*):(\\d*):(\\d*)(?:\\x1b\\[[\\d;]+m)*$",
+          "file": 1,
+          "line": 2,
+          "column": 3
+        }
+      ]
+    }
+  ]
+}

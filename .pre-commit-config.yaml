@@ -1,0 +1,24 @@
+# .config/mise/mise.lock is written by mise itself and must not be rewritten by generic text hooks.
+exclude: '^\.config/mise/mise\.lock$'
+
+repos:
+- repo: https://github.com/gitleaks/gitleaks
+  rev: v8.30.1
+  hooks:
+  - id: gitleaks
+# prek's Rust-native builtin implementations, no Python dependency: https://prek.j178.dev/builtin/
+- repo: builtin
+  hooks:
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+    # Keep Markdown hard line breaks (two trailing spaces); trim anything beyond that.
+    args: [--markdown-linebreak-ext=md]
+  - id: check-added-large-files
+  - id: check-merge-conflict
+  - id: check-symlinks
+  - id: destroyed-symlinks
+  - id: check-shebang-scripts-are-executable
+    # Rust's `#![...]` inner attributes (src/central.rs, src/peripheral.rs) look like a shebang to this hook.
+    exclude: '\.rs$'
+  - id: fix-byte-order-marker
+  - id: mixed-line-ending

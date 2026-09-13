@@ -1,0 +1,35 @@
+name: 'Dependency Review'
+
+# Block PRs that introduce dependencies with a moderate-or-higher severity advisory. This repository is
+# public, so `actions/dependency-review-action` is available without GitHub Advanced Security and it adds
+# license-policy checks on top of the vulnerability scan.
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  # The action posts a summary comment on failure.
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: 'Dependency Review'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden Runner
+        # Audit mode first; switch to `egress-policy: block` with an endpoint allowlist after a few real runs.
+        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          comment-summary-in-pr: on-failure
+          fail-on-severity: moderate
