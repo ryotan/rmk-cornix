@@ -1,0 +1,82 @@
+[settings]
+# Local builds are explicit: run `mise install` yourself, don't auto-install on cd.
+auto_install = false
+
+# Only resolve tool versions that have been released for at least 7 days. Exact pins in [tools] bypass
+# this; it affects `mise upgrade`, `mise latest` and `mise use --fuzzy`.
+minimum_release_age = "7d"
+
+# Block backends that run plugin code or that mise.lock cannot verify. The enabled backends (core,
+# aqua, github, gitlab, forgejo) record a checksum and provenance per platform.
+#   - asdf, vfox       : run plugin code (bash/Lua) at install
+#   - ubi              : deprecated upstream in favour of the github backend
+#   - npm/pipx/gem/go/dotnet/conda/spm
+#                      : mise.lock records only the version for these (no SHA, no provenance)
+#   - http, s3         : raw-URL installs this repo has no use for
+# cargo is the same "version only" case but stays enabled for the one tool that has no prebuilt release,
+# cargo-hex-to-uf2; mise builds it from crates.io with `cargo install --locked`.
+# mise has no `enable_backends` setting, hence the denylist.
+disable_backends = [
+  "asdf",
+  "vfox",
+  "ubi",
+  "npm",
+  "pipx",
+  "gem",
+  "go",
+  "dotnet",
+  "conda",
+  "spm",
+  "http",
+  "s3",
+]
+
+# mise.lock enforcement:
+#   lockfile: write checksums and provenance to .config/mise/mise.lock
+#   locked:   false, as in the other repos: a hosted Renovate cannot pass MISE_LOCKED=false and has to
+#             rewrite mise.lock when it bumps a pin. Renovate and the lock/locked policy for this repo
+#             are still TODO.
+lockfile = true
+locked = false
+
+# The Rust toolchain is managed by rust-toolchain.toml (rustup), not mise. These are the extra host tools
+# the firmware build needs.
+[tools]
+"github:sagiegurari/cargo-make" = "0.37.24"                  # runs the objcopy -> hex -> uf2 pipeline (Makefile.toml)
+"github:rust-embedded/cargo-binutils" = "0.4.0"              # `cargo objcopy` (ELF -> hex); needs the llvm-tools rustup component
+"cargo:cargo-hex-to-uf2" = "0.1.2"                           # `cargo hex-to-uf2` (hex -> uf2); source build, see disable_backends
+"github:knurling-rs/flip-link" = "0.1.12"                    # the linker set in .cargo/config.toml
+"github:xpack-dev-tools/arm-none-eabi-gcc-xpack" = "14.2.1-1.1"  # cc for the P-256 assembly in p256-cortex-m4-sys (via trouble-host)
+
+# On macOS, bindgen (nrf-sdc-sys) needs libclang; use the Command Line Tools copy unless LIBCLANG_PATH
+# is already set. On Linux the distro's libclang is found without help.
+[tasks.build]
+description = "Build both halves and emit firmware/rmk-cornix-{central,peripheral}.uf2"
+run = '''
+if [ -z "${LIBCLANG_PATH:-}" ] && [ -f "$(xcode-select -p 2>/dev/null)/usr/lib/libclang.dylib" ]; then
+  export LIBCLANG_PATH="$(xcode-select -p)/usr/lib"
+fi
+if [ "$(uname)" = Darwin ] && [ -z "${LIBCLANG_PATH:-}" ]; then
+  echo "error: libclang not found. Install the Command Line Tools (xcode-select --install) or set LIBCLANG_PATH." >&2
+  exit 1
+fi
+# rmk's build.rs derives BUILD_HASH from the build time and reruns only when build.rs itself changes.
+# A rebuild after editing keyboard.toml therefore keeps the old hash, and the keyboard keeps its stored
+# layout after flashing. Cleaning rmk reruns the build script.
+cargo clean -p rmk --release
+cargo make uf2
+'''
+
+# The firmware bins are no_std, so their test targets cannot build for the MCU: clippy them as bins only.
+# cornix-led is clippy'd with its tests on the host, where it is also unit-tested (`mise run test`).
+[tasks.lint]
+description = "Format check + clippy (firmware on the MCU target, cornix-led on the host)"
+run = [
+  "cargo fmt --all --check",
+  "cargo clippy --locked --no-deps -- -D warnings",
+  "cargo clippy --locked --no-deps -p cornix-led --all-targets --target \"$(rustc -vV | sed -n 's/^host: //p')\" -- -D warnings",
+]
+
+[tasks.test]
+description = "Unit-test the cornix-led crate on the host"
+run = "cargo test --locked -p cornix-led --target \"$(rustc -vV | sed -n 's/^host: //p')\""

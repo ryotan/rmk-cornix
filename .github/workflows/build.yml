@@ -2,8 +2,9 @@ name: Build RMK firmware
 on:
   workflow_dispatch:
   push:
-    paths:
-      - "**"
+    paths-ignore:
+      - "flash.sh"
+      - "**.md"
 
 jobs:
   build:

@@ -8,16 +8,20 @@ own RMK firmware for Cornix, not to replicate the official firmware.
 
 - It supports all keys and rotary encoders.
 - It supports Vial.
-- Its Vial layout is roughlly compatible with the official firmware, so you can
+- Its Vial layout is roughly compatible with the official firmware, so you can
   load your existing Vial layout (`.vil` file) without much modification.
-  Macros, combos, tap dances, key maps for rotary encoders, and some other
-  things may lost or be messed up, so you may still need to reconfigure them.
+  Macros, combos, tap dances and encoder keymaps may be lost or changed, so
+  check them after loading.
 
 # Notes
 
-- WS2812 status LEDs show the BLE profile, split link, battery and charging state
-  (ported from [numachang/cornix-rmk-custom](https://github.com/numachang/cornix-rmk-custom), MIT).
-- Optimization on BLE or power consumption is not made.
+- WS2812 status LEDs show the BLE profile and host link, the split link,
+  charging, a battery gauge, the active layer on layers 8 and 9, and a warning
+  when USB is connected to a host but output goes to BLE. The rendering path is
+  ported from [numachang/cornix-rmk-custom](https://github.com/numachang/cornix-rmk-custom)
+  (MIT). The logic is in the dependency-free `led/` crate, unit-tested with
+  `mise run test`.
+- BLE and power consumption are not optimized.
 
 # Usage
 
@@ -25,14 +29,16 @@ own RMK firmware for Cornix, not to replicate the official firmware.
 
 2. Build the firmware. Execute in the repository root:
    ```sh
-   cargo build --release
+   mise run build
    ```
-   This will generate two `.uf2` files in the repository root. Make sure you
-   have the Rust toolchain.
+   This writes `firmware/rmk-cornix-central.uf2` and
+   `firmware/rmk-cornix-peripheral.uf2`. Requires rustup and `mise install`
+   (see `.config/mise/config.toml`).
 
    Otherwise, fork this repository, go to GitHub Actions tab, tap *Build RMK
-   firmware*, and download the artifacts when the build is done.
+   firmware*, and download the `rmk-cornix-uf2` artifact into `firmware/`
+   when the build is done.
 
-3. Flash the two `.uf2` files to the left and right halves of the keyboard
-   respectively. You may need to delete Bluetooth pairing on your computer first
-   and re-pair after flashing.
+3. Flash the left half with `./flash.sh left` and the right half with
+   `./flash.sh right`; the script explains when you have to forget the
+   keyboard in your computer's Bluetooth settings and pair again.

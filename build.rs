@@ -1,14 +1,5 @@
-//! This build script copies the `memory.x` file from the crate root into
-//! a directory where the linker can always find it at build time.
-//! For many projects this is optional, as the linker always searches the
-//! project root directory -- wherever `Cargo.toml` is. However, if you
-//! are using a workspace or have a more complicated build setup, this
-//! build script becomes required. Additionally, by requesting that
-//! Cargo re-run the build script whenever `memory.x` is changed,
-//! updating `memory.x` ensures a rebuild of the application with the
-//! new memory settings.
-//!
-//! The build script also sets the linker flags to tell it which link script to use.
+//! Copies `memory.x` into `OUT_DIR`, adds it to the linker search path,
+//! sets the linker arguments, and generates the Vial config from `vial.json`.
 
 use const_gen::*;
 use std::fs::File;
@@ -18,7 +9,7 @@ use std::{env, fs};
 use xz2::read::XzEncoder;
 
 fn main() {
-    // Generate vial config at the root of project
+    // Rerun when any of the three inputs changes: vial.json and keyboard.toml here, memory.x below.
     println!("cargo:rerun-if-changed=vial.json");
     println!("cargo:rerun-if-changed=keyboard.toml");
 
@@ -33,10 +24,6 @@ fn main() {
         .unwrap();
     println!("cargo:rustc-link-search={}", out.display());
 
-    // By default, Cargo will re-run a build script whenever
-    // any file in the project changes. By specifying `memory.x`
-    // here, we ensure the build script is only re-run when
-    // `memory.x` is changed.
     println!("cargo:rerun-if-changed=memory.x");
 
     // Specify linker arguments.
@@ -61,27 +48,23 @@ fn generate_vial_config() {
     let out_file = Path::new(&env::var_os("OUT_DIR").unwrap()).join("config_generated.rs");
 
     let p = Path::new("vial.json");
-    let mut content = String::new();
-    match File::open(p) {
-        Ok(mut file) => {
-            file.read_to_string(&mut content)
-                .expect("Cannot read vial.json");
-        }
-        Err(e) => println!("Cannot find vial.json {:?}: {}", p, e),
-    };
-
-    let vial_cfg = json::stringify(json::parse(&content).unwrap());
+    let content = fs::read_to_string(p)
+        .unwrap_or_else(|e| panic!("cannot read vial.json at {}: {}", p.display(), e));
+    let vial_cfg = json::stringify(
+        json::parse(&content)
+            .unwrap_or_else(|e| panic!("vial.json at {} is not valid JSON: {}", p.display(), e)),
+    );
     let mut keyboard_def_compressed: Vec<u8> = Vec::new();
     XzEncoder::new(vial_cfg.as_bytes(), 6)
         .read_to_end(&mut keyboard_def_compressed)
         .unwrap();
 
     let keyboard_id: Vec<u8> = vec![0xB9, 0xBC, 0x09, 0xB2, 0x9D, 0x37, 0x4C, 0xEA];
+    // const_declaration! already emits #[allow(clippy::redundant_static_lifetimes)].
     let const_declarations = [
         const_declaration!(pub VIAL_KEYBOARD_DEF = keyboard_def_compressed),
         const_declaration!(pub VIAL_KEYBOARD_ID = keyboard_id),
     ]
-    .map(|s| "#[allow(clippy::redundant_static_lifetimes)]\n".to_owned() + s.as_str())
     .join("\n");
     fs::write(out_file, const_declarations).unwrap();
 }
