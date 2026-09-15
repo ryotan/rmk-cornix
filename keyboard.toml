@@ -109,10 +109,10 @@ layers = 10
 [[keymap.layer]]
 name = "QWERTY"
 keys = """
-Grave                                Q             W               E                        R                    T                                             Y      U                    I                    O            P                     Minus
-Tab                                  MT(A, LCtrl)  MT(S, LAlt)     MT(D, LGui)              F                    G                                             H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
-MT(Escape, LShift, SHIFT)            Z             X               C                        V                    B                             F13      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, SHIFT)
-MT(No, LCtrl | LAlt | LGui, MODKEY)  TD(0)         CapsWordToggle  LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, SHIFT)                  TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  No           TD(0)                 MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
+Grave                                Q             W            E                        R                    T                                            Y      U                    I                    O            P                     Minus
+Tab                                  MT(A, LCtrl)  MT(S, LAlt)  MT(D, LGui)              F                    G                                            H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
+MT(Escape, LShift, HOLD)             Z             X            C                        V                    B                            F13      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, HOLD)
+MT(No, LCtrl | LAlt | LGui, MODKEY)  No            TD(0)        LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, HOLD)                  TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  TD(0)        No                    MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
 """
 encoders = [["WM(RightBracket, RShift | RGui)", "WM(LeftBracket, RShift | RGui)"], ["WM(Equal, LGui)", "WM(Minus, LGui)"]]
 
@@ -212,7 +212,7 @@ gap_timeout = "250ms"
 quick_tap_timeout = "250ms"
 morses = [
   # TD(0) <- Vial TD0, tapping term 250
-  { tap = "WM(Space, LCtrl | LShift | LAlt)", hold = "WM(No, LCtrl | LShift | LAlt)" },
+  { tap = "WM(Space, LCtrl | LShift | LAlt)", hold = "WM(No, LCtrl | LShift | LAlt)", profile = "HOLD" },
   # TD(1) <- Vial TD1, tapping term 250
   { tap = "Language1", hold = "MO(3)", double_tap = "Language1", hold_after_tap = "MO(4)", profile = "THUMB_TD" },
   # TD(2) <- Vial TD2, tapping term 250
@@ -226,8 +226,8 @@ THUMB = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = 
 # Tap dances with a double-tap / tap-then-hold pattern: no quick tap, or the second press repeats the tap key;
 # off the thumbs Flow Tap is disabled too, since it also decides the tap early
 THUMB_TD = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "0ms" }
-# Shift holds: no quick tap, or a tap (Lang2, Esc, [) followed by a hold within 250 ms repeats the tap key instead of shifting
-SHIFT = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "0ms" }
+# Shift holds (Lang2, Esc, [) and the Meh tap dance: no quick tap, or a tap followed by a hold within 250 ms repeats the tap key
+HOLD = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "0ms" }
 TAPDANCE = { enable_flow_tap = false, quick_tap_timeout = "0ms" }
 # Modifier-only keys (MT with an empty tap): hold decided by time alone after 20 ms
 MODKEY = { enable_flow_tap = false, normal_mode = true, unilateral_tap = false, hold_timeout = "20ms", gap_timeout = "20ms", quick_tap_timeout = "0ms" }
