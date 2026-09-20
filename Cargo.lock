@@ -1969,7 +1969,7 @@ checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
 [[package]]
 name = "rmk"
 version = "0.9.0"
-source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Foneshot-user-keys#69194ccbf5a501238b5f5940582a54d3612d5f7a"
+source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Fmain#09f6cd7e352c01965a17c730b35bbf6f79dd64dc"
 dependencies = [
  "bt-hci",
  "byteorder",
@@ -2004,7 +2004,7 @@ dependencies = [
 [[package]]
 name = "rmk-config"
 version = "0.8.0"
-source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Foneshot-user-keys#69194ccbf5a501238b5f5940582a54d3612d5f7a"
+source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Fmain#09f6cd7e352c01965a17c730b35bbf6f79dd64dc"
 dependencies = [
  "config",
  "miniz_oxide",
@@ -2044,7 +2044,7 @@ dependencies = [
 [[package]]
 name = "rmk-macro"
 version = "0.8.0"
-source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Foneshot-user-keys#69194ccbf5a501238b5f5940582a54d3612d5f7a"
+source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Fmain#09f6cd7e352c01965a17c730b35bbf6f79dd64dc"
 dependencies = [
  "cargo_toml",
  "darling 0.24.1",
@@ -2060,7 +2060,7 @@ dependencies = [
 [[package]]
 name = "rmk-types"
 version = "0.4.0"
-source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Foneshot-user-keys#69194ccbf5a501238b5f5940582a54d3612d5f7a"
+source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Fmain#09f6cd7e352c01965a17c730b35bbf6f79dd64dc"
 dependencies = [
  "bitfield-struct",
  "defmt 1.1.1",

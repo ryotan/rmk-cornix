@@ -84,6 +84,7 @@ opt-level = "z"         # optimize for binary size
 overflow-checks = false
 lto = "fat"
 
-# rmk fork: User keys (BLE profile switch) consume a pending one-shot layer. Cargo.lock pins the commit.
+# rmk fork, branch ryotan/main: rmk-v0.9.0 plus the fixes merged there (User keys consume a pending
+# one-shot layer; a modifier's release waits while a tap-hold key is undecided). Cargo.lock pins the commit.
 [patch.crates-io]
-rmk = { git = "https://github.com/ryotan/rmk.git", branch = "ryotan/oneshot-user-keys" }
+rmk = { git = "https://github.com/ryotan/rmk.git", branch = "ryotan/main" }
