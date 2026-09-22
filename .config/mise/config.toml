@@ -33,11 +33,8 @@ disable_backends = [
 
 # mise.lock enforcement:
 #   lockfile: write checksums and provenance to .config/mise/mise.lock
-#   locked:   false, as in the other repos: a hosted Renovate cannot pass MISE_LOCKED=false and has to
-#             rewrite mise.lock when it bumps a pin. Renovate and the lock/locked policy for this repo
-#             are still TODO.
 lockfile = true
-locked = false
+locked = true
 
 # The Rust toolchain is managed by rust-toolchain.toml (rustup), not mise. These are the extra host tools
 # the firmware build needs.
