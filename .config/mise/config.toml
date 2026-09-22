@@ -33,6 +33,7 @@ disable_backends = [
 
 # mise.lock enforcement:
 #   lockfile: write checksums and provenance to .config/mise/mise.lock
+#   locked:   require matching lockfile entries for installation
 lockfile = true
 locked = true
 
