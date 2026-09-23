@@ -36,7 +36,7 @@ jobs:
       # Installs what rust-toolchain.toml declares (channel, components, the thumbv7em target) and
       # caches the cargo registry and target directory.
       - name: Setup Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
+        uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
         with:
           cache-workspace-crates: true
 
