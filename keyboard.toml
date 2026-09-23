@@ -109,10 +109,10 @@ layers = 10
 [[keymap.layer]]
 name = "QWERTY"
 keys = """
-Grave                                Q             W            E                        R                    T                                            Y      U                    I                    O            P                     Minus
-Tab                                  MT(A, LCtrl)  MT(S, LAlt)  MT(D, LGui)              F                    G                                            H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
-MT(Escape, LShift, HOLD)             Z             X            C                        V                    B                            F13      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, HOLD)
-MT(No, LCtrl | LAlt | LGui, MODKEY)  No            TD(0)        LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, HOLD)                  TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  TD(0)        No                    MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
+Grave                                Q             W            E                        R                    T                                              Y      U                    I                    O            P                     Minus
+Tab                                  MT(A, LCtrl)  MT(S, LAlt)  MT(D, LGui)              F                    G                                              H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
+MT(Escape, LShift, HOLD)             Z             X            C                        V                    B                            TD(3)      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, HOLD)
+MT(No, LCtrl | LAlt | LGui, MODKEY)  No            TD(0)        LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, HOLD)                    TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  TD(0)        No                    MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
 """
 encoders = [["WM(RightBracket, RShift | RGui)", "WM(LeftBracket, RShift | RGui)"], ["WM(Equal, LGui)", "WM(Minus, LGui)"]]
 
@@ -217,6 +217,8 @@ morses = [
   { tap = "Language1", hold = "MO(3)", double_tap = "Language1", hold_after_tap = "MO(4)", profile = "THUMB_TD" },
   # TD(2) <- Vial TD2, tapping term 250
   { tap = "WM(Kc0, LGui)", hold = "TG(8)", double_tap = "OSL(9)", profile = "TAPDANCE" },
+  # TD(3) <- Vial TD3, tapping term 250
+  { tap = "PrintScreen", double_tap = "WM(PrintScreen, LCtrl | LShift | LAlt)", profile = "TAPDANCE" },
 ]
 
 [behavior.morse.profiles]
