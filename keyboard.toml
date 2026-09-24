@@ -212,7 +212,8 @@ gap_timeout = "250ms"
 quick_tap_timeout = "250ms"
 morses = [
   # TD(0) <- Vial TD0, tapping term 250
-  { tap = "WM(Space, LCtrl | LShift | LAlt)", hold = "WM(No, LCtrl | LShift | LAlt)", profile = "HOLD" },
+  # Hold is restored by the generator because Vial reads MOD(...) as empty.
+  { tap = "WM(Space, LCtrl | LShift | LAlt)", hold = "MOD(LCtrl | LShift | LAlt)", profile = "HOLD" },
   # TD(1) <- Vial TD1, tapping term 250
   { tap = "Language1", hold = "MO(3)", double_tap = "Language1", hold_after_tap = "MO(4)", profile = "THUMB_TD" },
   # TD(2) <- Vial TD2, tapping term 250
