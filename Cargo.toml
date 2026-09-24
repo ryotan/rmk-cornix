@@ -58,7 +58,8 @@ cornix-led = { path = "led" }
 
 [build-dependencies]
 xz2 = "0.1.7"
-json = "0.12"
+# `json` is unmaintained (RUSTSEC-2022-0081); serde_json is already in the build graph through rmk-config.
+serde_json = "1"
 const-gen = "1.6"
 
 [[bin]]

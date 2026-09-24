@@ -50,10 +50,10 @@ fn generate_vial_config() {
     let p = Path::new("vial.json");
     let content = fs::read_to_string(p)
         .unwrap_or_else(|e| panic!("cannot read vial.json at {}: {}", p.display(), e));
-    let vial_cfg = json::stringify(
-        json::parse(&content)
-            .unwrap_or_else(|e| panic!("vial.json at {} is not valid JSON: {}", p.display(), e)),
-    );
+    // Round-trip through a parser to validate the file and drop its whitespace before compression.
+    let vial_value: serde_json::Value = serde_json::from_str(&content)
+        .unwrap_or_else(|e| panic!("vial.json at {} is not valid JSON: {}", p.display(), e));
+    let vial_cfg = serde_json::to_string(&vial_value).unwrap();
     let mut keyboard_def_compressed: Vec<u8> = Vec::new();
     XzEncoder::new(vial_cfg.as_bytes(), 6)
         .read_to_end(&mut keyboard_def_compressed)

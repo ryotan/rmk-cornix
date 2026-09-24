@@ -1,0 +1,18 @@
+# Advisories that OSV reports against Cargo.lock but that cannot be fixed from this repository. OpenSSF
+# Scorecard's Vulnerabilities check reads this file, as does osv-scanner.
+#
+# All three are RustSec "unmaintained" notices (`informational = "unmaintained"`), not vulnerabilities:
+# no version is patched, and each crate arrives through an upstream dependency. Re-check each entry when
+# the dependency that pulls it in is upgraded.
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2026-0110"
+reason = "bare-metal is unmaintained. It comes from cortex-m 0.7, and every cortex-m 0.7 release up to the latest (0.7.9) depends on it."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2023-0089"
+reason = "atomic-polyfill is unmaintained. It comes from heapless 0.7 through the `heapless` feature of postcard, which is on heapless 0.7 up to the latest release (1.1.3)."
+
+[[IgnoredVulns]]
+id = "RUSTSEC-2024-0436"
+reason = "paste is unmaintained. It comes from rmk and rmk-config (the ryotan/rmk fork), which can move to the pastey fork."
