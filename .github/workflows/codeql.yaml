@@ -1,0 +1,52 @@
+name: 'CodeQL'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '30 2 * * 6'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Superseded pushes to a PR branch are cancelled; runs on main are left to finish.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+# Default-deny token permissions; the analysis job grants what it needs.
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: 'CodeQL (rust)'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Uploads the analysis to code scanning.
+    timeout-minutes: 30
+    steps:
+      - name: Harden Runner
+        # Audit first; switch `egress-policy` to `block` once the egress has been baselined from real runs.
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # build-mode none extracts the sources without building them, so neither the MCU target nor the
+      # firmware build tools (mise, libclang) are needed here.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        with:
+          languages: rust
+          build-mode: none
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+        with:
+          category: /language:rust
