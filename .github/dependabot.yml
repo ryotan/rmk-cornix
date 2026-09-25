@@ -1,0 +1,48 @@
+version: 2
+
+# Dependabot here is configured for security-update PRs only, as in ryotan/suzunari-error. Renovate (see
+# .github/renovate.json5) owns the regular version-bump flow with its 7-day cooldown.
+#   - open-pull-requests-limit: 0
+#       Silences version-update PRs while still allowing security-update PRs (the limit does not apply to
+#       those; they are created when a GHSA advisory is published).
+#   - commit-message.prefix: "🔒️(deps)"
+#       Dependabot appends ": ", so a subject reads `🔒️(deps): Bump foo from 1.0.0 to 1.0.1`, apart from
+#       Renovate's `⬆️(deps):` version bumps.
+#   - schedule.interval: "weekly"
+#       Required by the schema; security updates do not follow the schedule.
+#   - labels
+#       Surface the PRs on the dashboard. Review requests come from .github/CODEOWNERS.
+
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "🔒️(deps)"
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "🔒️(deps)"
+    labels:
+      - "dependencies"
+      - "security"
+
+  - package-ecosystem: "rust-toolchain"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+    commit-message:
+      prefix: "🔒️(deps)"
+    labels:
+      - "dependencies"
+      - "security"

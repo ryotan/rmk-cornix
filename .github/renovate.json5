@@ -1,0 +1,77 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  // This repository is a GitHub fork, and Renovate skips forks unless told otherwise.
+  forkProcessing: 'enabled',
+  // Review requests come from .github/CODEOWNERS, as in ryotan/suzunari-error.
+  extends: [
+    // `config:best-practices` bundles config:recommended + helpers:pinGitHubActionDigests + docker:pinDigests
+    // + :configMigration + :pinDevDependencies + security:minimumReleaseAgeNpm + :maintainLockFilesWeekly
+    // + abandonments:recommended.
+    'config:best-practices',
+    // The firmware is an application, not a library, so every dependency is pinned exactly.
+    ':pinAllExceptPeerDependencies',
+  ],
+  addLabels: [
+    'dependencies',
+  ],
+  commitMessagePrefix: '⬆️(deps): ',
+  timezone: 'Asia/Tokyo',
+  // Mitigate supply-chain attacks by only considering versions that have been released for at least 1 week.
+  minimumReleaseAge: '7 days',
+  // Suppress branch/PR creation while a version is still inside the minimumReleaseAge window.
+  //   cf. https://docs.renovatebot.com/key-concepts/minimum-release-age/#recommended-settings
+  internalChecksFilter: 'strict',
+  // Always rebase stale branches before merge. mise.lock updates are purely additive, so a branch that
+  // falls behind main can stack a duplicate TOML table without a textual conflict. The `main` ruleset
+  // also requires branches to be up to date.
+  rebaseWhen: 'behind-base-branch',
+  // Use the OSV database (osv.dev) for vulnerability alerts in addition to the GitHub Advisory Database.
+  osvVulnerabilityAlerts: true,
+  vulnerabilityAlerts: {
+    // Bypass minimumReleaseAge for security alerts (CVEs) so they are applied immediately.
+    minimumReleaseAge: '0 days',
+  },
+  packageRules: [
+    {
+      // `security:minimumReleaseAgeNpm` (pulled in via `config:best-practices`) sets the npm cooldown to
+      // 3 days. Override back to 7 days so npm shares the same cooldown as every other datasource.
+      matchDatasources: [
+        'npm',
+      ],
+      minimumReleaseAge: '7 days',
+    },
+    {
+      // These update types introduce no new release: pin and pinDigest fix an existing version or
+      // action reference, replacement swaps to a maintained successor, and lockFileMaintenance refreshes
+      // the lockfile as a whole. None of them carries a release timestamp, so any non-null
+      // `minimumReleaseAge` would leave the stability check pending forever. `null` disables it.
+      matchUpdateTypes: [
+        'pin',
+        'pinDigest',
+        'replacement',
+        'lockFileMaintenance',
+      ],
+      minimumReleaseAge: null,
+    },
+    {
+      // Suppress digest update PRs. A new digest is by definition freshly published and carries no release
+      // timestamp, so it can never satisfy the 7-day cooldown. The SHA pins stay, and real version bumps
+      // still flow with the cooldown.
+      matchUpdateTypes: [
+        'digest',
+      ],
+      enabled: false,
+    },
+    {
+      // `cargo update` has no release-age filter, so scheduled lockfile maintenance would pull in transitive
+      // versions still inside the cooldown. Direct bumps refresh Cargo.lock; CVE-tracked transitives bypass
+      // the cooldown via `vulnerabilityAlerts`.
+      matchManagers: [
+        'cargo',
+      ],
+      lockFileMaintenance: {
+        enabled: false,
+      },
+    },
+  ],
+}
