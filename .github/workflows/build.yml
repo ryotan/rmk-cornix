@@ -27,8 +27,9 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Harden Runner
-        # The allowlist was baselined from the audit-mode log of a run on main. GitHub's own domains
-        # (github.com, *.github.com, the Actions cache and artifact storage) are allowed by the action.
+        # The allowlist was baselined from the audit-mode log of a run on main. This version adds the
+        # Actions cache host on its own but not github.com, which v2.21.1 allows by itself.
+        #   - git and mise: github.com and api.github.com (the rmk fork, mise and its tool downloads)
         #   - apt (libclang): the Ubuntu, Microsoft and Google package sources configured on the runner
         #   - cargo and rustup: crates.io and static.rust-lang.org
         #   - mise: its version API and GitHub release assets, and Sigstore for the attestation checks
@@ -36,9 +37,11 @@ jobs:
         with:
           egress-policy: block
           allowed-endpoints: >
+            api.github.com:443
             azure.archive.ubuntu.com:80
             dl.google.com:443
             esm.ubuntu.com:443
+            github.com:443
             index.crates.io:443
             mise-versions.jdx.dev:443
             mise.jdx.dev:443
