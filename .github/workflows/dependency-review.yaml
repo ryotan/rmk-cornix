@@ -8,21 +8,35 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default-deny token permissions; the job grants what it needs.
 permissions:
   contents: read
-  # The action posts a summary comment on failure.
-  pull-requests: write
 
 jobs:
   dependency-review:
     name: 'Dependency Review'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write # The action posts a summary comment on failure.
+    timeout-minutes: 10
     steps:
       - name: Harden Runner
-        # Audit mode first; switch to `egress-policy: block` with an endpoint allowlist after a few real runs.
+        # The action reaches deps.dev and the Scorecard API when a PR changes dependencies, as in
+        # ryotan/suzunari-error. github.com and api.github.com are listed because this version does not
+        # allow them on its own (v2.21.1 does).
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
-          egress-policy: audit
+          egress-policy: block
+          allowed-endpoints: >
+            api.deps.dev:443
+            api.github.com:443
+            api.securityscorecards.dev:443
+            github.com:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

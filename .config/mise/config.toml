@@ -46,6 +46,9 @@ locked = true
 "github:knurling-rs/flip-link" = "0.1.12"                    # the linker set in .cargo/config.toml
 "github:xpack-dev-tools/arm-none-eabi-gcc-xpack" = "14.2.1-1.1"  # cc for the P-256 assembly in p256-cortex-m4-sys (via trouble-host)
 prek = "0.4.14"                                              # runs .pre-commit-config.yaml (`prek install` once per clone)
+ghalint = "1.5.6"                                            # workflow linters, run by .github/workflows/workflow-lint.yaml
+pinact = "5.0.0"
+zizmor = "1.30.1"
 
 # On macOS, bindgen (nrf-sdc-sys) needs libclang; use the Command Line Tools copy unless LIBCLANG_PATH
 # is already set. On Linux the distro's libclang is found without help.

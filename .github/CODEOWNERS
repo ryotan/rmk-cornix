@@ -1,0 +1,4 @@
+# Every path in this repo is owned by @ryotan, so every PR (human, Renovate or Dependabot) requests review
+# from ryotan. This replaces the `reviewers` key that .github/renovate.json5 used to carry, and the `main`
+# ruleset requires the code owner's review.
+* @ryotan

@@ -1,11 +1,14 @@
 name: Build RMK firmware
 
+# No path filter: the job is a required status check on main, and a filtered-out PR would never report it.
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-      - "flash.sh"
-      - "**.md"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Superseded pushes to a branch are cancelled; runs on main are left to finish.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 # Default-deny token permissions; the job only needs read access to clone the repository.
 permissions:
@@ -20,13 +23,34 @@ jobs:
   build:
     name: Lint, test and build
     runs-on: ubuntu-latest
+    # A warm run takes about 2 minutes; 30 absorbs a cold cache.
+    timeout-minutes: 30
     steps:
       - name: Harden Runner
-        # Audit mode first: switching to `egress-policy: block` needs an endpoint allowlist baselined
-        # from the audit logs of real runs (the rollout used in the other repos).
+        # The allowlist was baselined from the audit-mode log of a run on main. This version adds the
+        # Actions cache host on its own but not github.com, which v2.21.1 allows by itself.
+        #   - git and mise: github.com and api.github.com (the rmk fork, mise and its tool downloads)
+        #   - apt (libclang): the Ubuntu, Microsoft and Google package sources configured on the runner
+        #   - cargo and rustup: crates.io and static.rust-lang.org
+        #   - mise: its version API and GitHub release assets, and Sigstore for the attestation checks
         uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
         with:
-          egress-policy: audit
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            azure.archive.ubuntu.com:80
+            dl.google.com:443
+            esm.ubuntu.com:443
+            github.com:443
+            index.crates.io:443
+            mise-versions.jdx.dev:443
+            mise.jdx.dev:443
+            motd.ubuntu.com:443
+            packages.microsoft.com:443
+            release-assets.githubusercontent.com:443
+            static.crates.io:443
+            static.rust-lang.org:443
+            tuf-repo-cdn.sigstore.dev:443
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
