@@ -33,7 +33,7 @@ jobs:
         #   - apt (libclang): the Ubuntu, Microsoft and Google package sources configured on the runner
         #   - cargo and rustup: crates.io and static.rust-lang.org
         #   - mise: its version API and GitHub release assets, and Sigstore for the attestation checks
-        uses: step-security/harden-runner@05e31511f85b41b11d1cf0ef85d0992719546e2c # v2.21.0
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
         with:
           egress-policy: block
           allowed-endpoints: >
