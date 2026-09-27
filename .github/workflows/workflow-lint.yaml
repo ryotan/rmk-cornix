@@ -55,7 +55,7 @@ jobs:
           # with this variable.
           MISE_PARANOID: 'true'
         with:
-          version: 2026.9.11
+          version: 2026.9.12
           install_args: 'ghalint pinact zizmor'
 
       - name: ghalint
