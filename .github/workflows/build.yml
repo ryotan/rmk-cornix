@@ -55,9 +55,10 @@ jobs:
           persist-credentials: false
 
       # Installs what rust-toolchain.toml declares (channel, components, the thumbv7em target) and
-      # caches the cargo registry and target directory.
+      # caches the cargo registry and target directory. StepSecurity's maintained fork of
+      # actions-rust-lang/setup-rust-toolchain is free for public repositories.
       - name: Setup Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@ecabd13d1c56bd1345c230e542e9144811ad706f # v2.0.0
+        uses: step-security/setup-rust-toolchain@f547b7511b1e8f8d1cda8ef9f27bc365e7761fee # v2.0.0
         with:
           cache-workspace-crates: true
 
