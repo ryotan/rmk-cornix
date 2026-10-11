@@ -318,9 +318,9 @@ dependencies = [
 
 [[package]]
 name = "const-gen"
-version = "1.6.9"
+version = "1.6.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a0bb51eeea292ceb9bf5312b4416c1b151b130502e6892a2ae174ae1e4b51e58"
+checksum = "3ac0f11df66d4747a8f4a14a49a8fe2bc257d3db2efbd0af42cdd95a8d0094c3"
 dependencies = [
  "const-gen-derive",
 ]
