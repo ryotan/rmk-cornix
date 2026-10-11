@@ -36,6 +36,8 @@ disable_backends = [
 #   locked:   require matching lockfile entries for installation
 lockfile = true
 locked = true
+# Local development (macos-arm64) and CI (linux-x64)
+lockfile_platforms = ["macos-arm64", "linux-x64"]
 
 # The Rust toolchain is managed by rust-toolchain.toml (rustup), not mise. These are the extra host tools
 # the firmware build needs.
