@@ -62,9 +62,6 @@ jobs:
         with:
           cache-workspace-crates: true
 
-      - name: Install additional problem matchers
-        run: echo "::add-matcher::.github/problem-matchers.json"
-
       # nrf-sdc-sys runs bindgen over the SoftDevice controller headers.
       - name: Install libclang (nrf-sdc bindgen)
         run: sudo apt-get update && sudo apt-get install -y libclang-dev
