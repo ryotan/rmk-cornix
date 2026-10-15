@@ -31,6 +31,7 @@ jobs:
         uses: step-security/harden-runner@351661ca32ac09a36dc5ee2d536e3128f2a3c8ed # v2.22.0
         with:
           egress-policy: block
+          disable-telemetry: true
           allowed-endpoints: >
             api.deps.dev:443
             api.securityscorecards.dev:443

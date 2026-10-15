@@ -31,16 +31,16 @@ jobs:
         # (github.com and *.github.com: the rmk fork, mise downloads) are allowed by the action.
         #   - apt (libclang): the Ubuntu, Microsoft and Google package sources configured on the runner
         #   - cargo and rustup: crates.io and static.rust-lang.org
-        #   - mise: its version API and GitHub release assets, and Sigstore for the attestation checks
+        #   - mise: mise.jdx.dev, GitHub release assets, and Sigstore for the attestation checks
         uses: step-security/harden-runner@351661ca32ac09a36dc5ee2d536e3128f2a3c8ed # v2.22.0
         with:
           egress-policy: block
+          disable-telemetry: true
           allowed-endpoints: >
             azure.archive.ubuntu.com:80
             dl.google.com:443
             esm.ubuntu.com:443
             index.crates.io:443
-            mise-versions.jdx.dev:443
             mise.jdx.dev:443
             motd.ubuntu.com:443
             packages.microsoft.com:443
