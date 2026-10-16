@@ -2,6 +2,10 @@
 # Local builds are explicit: run `mise install` yourself, don't auto-install on cd.
 auto_install = false
 
+# Fetch version lists and attestations from upstream (e.g. the GitHub API) instead of
+# mise-versions.jdx.dev.
+use_versions_host = false
+
 # Only resolve tool versions that have been released for at least 7 days. Exact pins in [tools] bypass
 # this; it affects `mise upgrade`, `mise latest` and `mise use --fuzzy`.
 minimum_release_age = "7d"

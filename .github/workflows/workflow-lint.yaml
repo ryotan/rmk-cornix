@@ -33,14 +33,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Harden Runner
-        # mise and its version API, the linters' release assets, and Sigstore for the attestation checks.
+        # mise, the linters' release assets, and Sigstore for the attestation checks.
         # GitHub's own domains (pinact's API calls) are allowed by the action.
         uses: step-security/harden-runner@351661ca32ac09a36dc5ee2d536e3128f2a3c8ed # v2.22.0
         with:
           egress-policy: block
+          disable-telemetry: true
           allowed-endpoints: >
             mise.jdx.dev:443
-            mise-versions.jdx.dev:443
             release-assets.githubusercontent.com:443
             tuf-repo-cdn.sigstore.dev:443
 
