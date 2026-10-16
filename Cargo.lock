@@ -180,6 +180,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "bt-hci"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0048816dbf43511d51f46514fada281890aa0190ada5170cf7bbb66259b611e7"
+dependencies = [
+ "bt-hci-transport",
+ "btuuid",
+ "defmt 1.1.1",
+ "embassy-sync",
+ "embedded-io 0.7.1",
+ "embedded-io-async 0.7.0",
+ "futures-intrusive",
+ "heapless 0.9.3",
+]
+
+[[package]]
 name = "bt-hci-transport"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1608,7 +1624,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b5916d1521376d6876d0b0e3353e9affa03ce55daa9346188a5815db1c2eb84d"
 dependencies = [
- "bt-hci",
+ "bt-hci 0.10.1",
  "bt-hci-transport",
  "critical-section",
  "defmt 1.1.1",
@@ -1965,7 +1981,7 @@ name = "rmk"
 version = "0.9.0"
 source = "git+https://github.com/ryotan/rmk.git?branch=ryotan%2Fmain#09f6cd7e352c01965a17c730b35bbf6f79dd64dc"
 dependencies = [
- "bt-hci",
+ "bt-hci 0.10.1",
  "byteorder",
  "cortex-m",
  "crc32fast",
@@ -2016,7 +2032,7 @@ dependencies = [
 name = "rmk-cornix"
 version = "0.1.0"
 dependencies = [
- "bt-hci",
+ "bt-hci 0.11.0",
  "const-gen",
  "cornix-led",
  "cortex-m",
@@ -2547,7 +2563,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "19a566cc37ceaff5cc2a6ff8cc02debd1ee6b95d59ced8830d005da8b080cbe9"
 dependencies = [
  "aes",
- "bt-hci",
+ "bt-hci 0.10.1",
  "cmac",
  "defmt 1.1.1",
  "embassy-futures",
