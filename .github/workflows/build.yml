@@ -71,7 +71,7 @@ jobs:
       - name: Setup mise
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
         with:
-          version: 2026.10.3
+          version: 2026.10.5
 
       - id: lint
         name: Format check and clippy
@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload uf2 artifacts
         if: steps.build.outcome == 'success'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: rmk-cornix-uf2
           path: |
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload elf artifacts
         if: steps.build.outcome == 'success'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: rmk-cornix-elf
           path: |
