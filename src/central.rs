@@ -25,8 +25,8 @@ mod keyboard_central {
         config.sequence_load = SequenceLoad::Common;
         let pwm = SequencePwm::new_1ch(p.PWM0, p.P0_24, config).unwrap();
         let led_power = Output::new(p.P0_13, Level::Low, OutputDrive::Standard);
-        // Charger STAT on P0.01, as in numachang's config; unverified until a charge is observed.
-        let charge_stat = Input::new(p.P0_01, Pull::Up);
+        // Charger status input, active low.
+        let charge_stat = Input::new(p.P1_09, Pull::Up);
         Ws2812Driver::processor(pwm, led_power, Role::Central, Some(charge_stat))
     }
 }

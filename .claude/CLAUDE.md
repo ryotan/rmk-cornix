@@ -59,8 +59,8 @@ RMK firmware for the Cornix LP split keyboard (nRF52840, BLE split, Vial).
 - `src/ws2812.rs`, `src/deadline.rs` — the WS2812 status LED driver and the deadline-driven processor loop
 - `led/` (`cornix-led`) — status LED logic: facts in, colours and the next wake-up out. Dependency-free
   and hardware-free so it builds and tests on the host
-- `Cargo.toml` `[patch.crates-io]` — `rmk` comes from the ryotan/rmk fork (branch `ryotan/main`);
-  `Cargo.lock` pins the commit
+- `Cargo.toml` `[patch.crates-io]` — `rmk` comes from a pinned revision of the ryotan/rmk fork,
+  with modifier handling fixes and 1M PHY for the split link
 
 RMK derives `BUILD_HASH` from the build time and reruns its build script only when it changes, so
 `mise run build` cleans `rmk` first. A new hash makes RMK erase its storage and Bluetooth bonds on flashing.
@@ -75,4 +75,4 @@ RMK derives `BUILD_HASH` from the build time and reruns its build script only wh
 
 ## Toolchain
 
-Rust 1.96.0 (pinned in `rust-toolchain.toml`). Edition 2021.
+Rust version, components and targets are pinned in `rust-toolchain.toml`. Edition 2021.

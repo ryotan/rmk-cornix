@@ -9,7 +9,7 @@ chip = "nrf52840"
 [ble]
 enabled = true
 use_2m_phy = true
-default_tx_power = 0
+default_tx_power = 8
 battery_adc_pin = "P0_05"
 adc_divider_measured = 2000
 adc_divider_total = 2806
@@ -32,7 +32,7 @@ pin_a = "P1_04"
 pin_b = "P1_06"
 phase = "resolution"
 resolution = 4
-# Without the MCU pull-ups the encoder never registers a turn (verified 2026-09-13, both halves); the ZMK port pulls P1.04/P1.06 up as well
+# Both encoders require the MCU pull-ups to register rotation.
 internal_pullup = true
 
 [[split.peripheral]]
@@ -40,6 +40,9 @@ rows = 4
 cols = 7
 row_offset = 4
 col_offset = 0
+battery_adc_pin = "P0_05"
+adc_divider_measured = 2000
+adc_divider_total = 2806
 
 [split.peripheral.matrix]
 row_pins = ["P1_09", "P0_28", "P0_03", "P1_10"]
@@ -58,7 +61,7 @@ debounce_time = 5
 # 3 profiles keep the User keycodes numbered like the official firmware (RMK derives them from this count):
 # User0-2 = BT0-2, User3 = next, User4 = prev, User5 = clear bond, User6 = USB/BLE, User7 = clear split peer (5 s hold only)
 ble_profiles_num = 3
-split_central_sleep_timeout_seconds = 600
+split_central_sleep_timeout_seconds = 3600
 morse_max_num = 32
 max_patterns_per_key = 8
 combo_max_num = 32
@@ -109,10 +112,10 @@ layers = 10
 [[keymap.layer]]
 name = "QWERTY"
 keys = """
-Grave                                Q             W            E                        R                    T                                              Y      U                    I                    O            P                     Minus
-Tab                                  MT(A, LCtrl)  MT(S, LAlt)  MT(D, LGui)              F                    G                                              H      J                    MT(K, RGui)          MT(L, RAlt)  MT(Semicolon, RCtrl)  Quote
-MT(Escape, LShift, HOLD)             Z             X            C                        V                    B                            TD(3)      TD(2)  N      M                    Comma                Dot          Slash                 MT(LeftBracket, RShift, HOLD)
-MT(No, LCtrl | LAlt | LGui, MODKEY)  No            TD(0)        LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, HOLD)                    TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  TD(0)        No                    MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
+Grave                                Q                  W                 E                        R                    T                                              Y      U                    I                    O                 P                          Minus
+Tab                                  MT(A, LCtrl, HRM)  MT(S, LAlt, HRM)  MT(D, LGui, HRM)         F                    G                                              H      J                    MT(K, RGui, HRM)     MT(L, RAlt, HRM)  MT(Semicolon, RCtrl, HRM)  Quote
+MT(Escape, LShift, HOLD)             Z                  X                 C                        V                    B                            TD(3)      TD(2)  N      M                    Comma                Dot               Slash                      MT(LeftBracket, RShift, HOLD)
+MT(No, LCtrl | LAlt | LGui, MODKEY)  F23                TD(0)             LT(2, Backspace, THUMB)  LT(1, Space, THUMB)  MT(Language2, LShift, HOLD)                    TD(1)  LT(1, Space, THUMB)  LT(2, Enter, THUMB)  TD(0)             F24                        MT(No, RCtrl | RShift | RAlt | RGui, MODKEY)
 """
 encoders = [["WM(RightBracket, RShift | RGui)", "WM(LeftBracket, RShift | RGui)"], ["WM(Equal, LGui)", "WM(Minus, LGui)"]]
 
@@ -203,7 +206,7 @@ timeout = "50ms"
 [behavior.morse]
 # Default profile = the Vial QMK Settings of the snapshot
 enable_flow_tap = true
-prior_idle_time = "200ms"
+prior_idle_time = "120ms"
 permissive_hold = true
 unilateral_tap = true
 hold_timeout = "250ms"
@@ -223,6 +226,8 @@ morses = [
 ]
 
 [behavior.morse.profiles]
+# Home-row mod-taps inherit the default behavior except for the shorter quick-tap window.
+HRM = { quick_tap_timeout = "100ms" }
 # Thumb keys: hold_on_other_press so the layer fires the instant a key is pressed while the thumb is held (Corne-like);
 # Flow Tap off (letter->thumb still enters the layer); a lone press becomes a hold after 250ms
 THUMB = { enable_flow_tap = false, hold_on_other_press = true, unilateral_tap = false, hold_timeout = "250ms", gap_timeout = "250ms", quick_tap_timeout = "250ms" }

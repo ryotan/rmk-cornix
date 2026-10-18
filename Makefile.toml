@@ -40,8 +40,7 @@ args = [
 ]
 dependencies = ["build"]
 
-# flash.sh reads the UF2 images from firmware/. It is untracked (*.uf2 is ignored), so the build
-# creates it.
+# Create the output directory for flash.sh; generated UF2 files are ignored by Git.
 [tasks.firmware-dir]
 command = "mkdir"
 args = ["-p", "firmware"]

@@ -19,9 +19,13 @@ own RMK firmware for Cornix, not to replicate the official firmware.
   charging, a battery gauge, the active layer on layers 8 and 9, and a warning
   when USB is connected to a host but output goes to BLE. The rendering path is
   ported from [numachang/cornix-rmk-custom](https://github.com/numachang/cornix-rmk-custom)
-  (MIT). The logic is in the dependency-free `led/` crate, unit-tested with
-  `mise run test`.
-- BLE and power consumption are not optimized.
+  (MIT).
+- The pinned RMK fork requests 1M PHY for the split link and 2M PHY for the
+  host link. `use_2m_phy = true` enables 2M PHY support in the BLE controller;
+  the fork's split-link code requests 1M PHY separately.
+- The keymap block in `keyboard.toml` is generated from a Pipette snapshot
+  outside this repository. Edit the snapshot and regenerate the block to keep
+  changes across future imports.
 
 # Usage
 
@@ -35,9 +39,9 @@ own RMK firmware for Cornix, not to replicate the official firmware.
    `firmware/rmk-cornix-peripheral.uf2`. Requires rustup and `mise install`
    (see `.config/mise/config.toml`).
 
-   Otherwise, fork this repository, go to GitHub Actions tab, tap *Build RMK
-   firmware*, and download the `rmk-cornix-uf2` artifact into `firmware/`
-   when the build is done.
+   For a GitHub build, open Actions, select a successful *Build RMK firmware*
+   run for the desired commit on `main`, and download its `rmk-cornix-uf2`
+   artifact. Extract both UF2 files into `firmware/`.
 
 3. Flash the left half with `./flash.sh left` and the right half with
    `./flash.sh right`; the script explains when you have to forget the

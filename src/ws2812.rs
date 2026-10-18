@@ -21,11 +21,9 @@
 //! Each half carries two serial RGB LEDs, driven by the nRF52840 PWM
 //! peripheral with EasyDMA. Each WS2812 data bit is one PWM period and the
 //! whole 2-pixel frame is a sequence the PWM hardware clocks out by DMA. The
-//! CPU is not in the timing loop: no interrupt masking, no busy-wait, so the
-//! BLE radio (nrf-sdc / MPSL) is not blocked. Bit-banging inside
-//! `interrupt::free` blocked the radio and dropped the BLE link; SPIM
-//! produced no output on this board. See [`Ws2812Driver::render`] for when
-//! a frame is written and when the LED power is on.
+//! CPU does not generate the waveform in software, so transmitting a frame
+//! requires neither interrupt masking nor a busy-wait. See
+//! [`Ws2812Driver::render`] for frame updates and LED power control.
 //!
 //! `cornix_led::indicator` documents which pixel is which and what each
 //! shows.
@@ -65,9 +63,8 @@ const SEQ_BITS: usize = 2 * 3 * 8;
 const SEQ_RESET: usize = 40;
 const SEQ_LEN: usize = SEQ_BITS + SEQ_RESET;
 
-/// RMK 0.9 publishes no event for USB power, and none for the STAT line
-/// either (see `sample_power`), so the driver polls them this often and
-/// feeds the result to the status like an event.
+/// Poll interval for each half's local VBUS and charger STAT inputs, which
+/// are not supplied by the subscribed RMK events (see `sample_power`).
 const SAMPLE_INTERVAL_MS: Ms = 1000;
 
 /// Status indicator: RMK events and pin sampling in, WS2812 frames out.
@@ -89,7 +86,7 @@ const SAMPLE_INTERVAL_MS: Ms = 1000;
 pub struct Ws2812Driver {
     pwm: SequencePwm<'static>,
     led_power: Output<'static>,
-    /// Charger STAT line (open-drain, low while charging), if wired. `None`
+    /// Charger STAT line (low while charging), if wired. `None`
     /// means charging is never reported.
     charge_stat: Option<Input<'static>>,
     status: Status,
@@ -157,10 +154,9 @@ impl Ws2812Driver {
     /// VBUS comes straight from the POWER peripheral's USBREGSTATUS register
     /// (independent of the battery switch and of USB enumeration); a bare
     /// register read is passive, so it is safe alongside MPSL / nrf-sdc.
-    /// RMK 0.9 accepts `charge_state.pin` in keyboard.toml but never starts
-    /// its `ChargingStateReader`, so the STAT line is sampled here. Once RMK
-    /// runs the reader, delete this sampling and subscribe to
-    /// `ChargingStateEvent` instead.
+    /// The pinned RMK revision accepts `charge_state.pin` but does not start
+    /// `ChargingStateReader`, so this driver samples STAT directly. If RMK
+    /// starts publishing local charging events, use those instead.
     fn sample_power(&mut self, now: Ms) {
         let vbus = if embassy_nrf::pac::POWER.usbregstatus().read().vbusdetect() {
             Vbus::Present {
@@ -261,8 +257,7 @@ impl Ws2812Driver {
 
     // --- Event handlers (dispatched by the `#[processor]` macro) ---
 
-    /// Local battery level. The event's `charge_state` is ignored because RMK
-    /// never runs its charging reader (see `sample_power`).
+    /// Local battery level. Charging state comes from `sample_power`.
     async fn on_battery_status_event(&mut self, event: BatteryStatusEvent) {
         let level = match event.0 {
             BatteryStatus::Available { level, .. } => level,
