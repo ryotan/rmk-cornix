@@ -85,4 +85,4 @@ lto = "fat"
 
 # The fork provides modifier handling fixes and 1M PHY for the split link.
 [patch.crates-io]
-rmk = { git = "https://github.com/ryotan/rmk.git", rev = "9ad8a8bc14a973ab8045a6a3e87b9c745c9c2aa6" }
+rmk = { git = "https://github.com/ryotan/rmk.git", rev = "3126b5457f12dfdaedd75de707dc8c07a73b87b6" }
