@@ -14,7 +14,7 @@
 //! 4. A coloured layer is active, level known, no VBUS: battery gauge, steady
 //!    (green above 50 %, yellow 21–50 %, red at or below 20 %).
 //! 5. A coloured layer is active, VBUS present, not charging: green, steady.
-//! 6. No VBUS, level at or below 20 %: red double blink for the first 5 s of
+//! 6. No VBUS, level at or below 20 %: red double blink for the first 15 s of
 //!    every minute, dark for the rest.
 //! 7. Charging stopped with VBUS present, first 3 s: green pulse, once.
 //! 8. Charging (VBUS present, charger reports charging): green breathing.
@@ -41,9 +41,8 @@
 //! above the layer colour: while unlinked, the right half neither reaches the
 //! host nor receives layer changes.
 //!
-//! "VBUS present, not charging" cannot tell a full battery from the power
-//! switch being off (measured: the level reads 100 % either way), so row 5
-//! also lights with the switch off on USB.
+//! "VBUS present, not charging" does not establish that the battery is full.
+//! Row 5 indicates USB power without an active charging signal.
 
 use crate::color::{
     gauge_color, layer_color, profile_color, Grb, BATTERY_LOW, BLUE, BREATH_PEAK, GREEN, OFF,
@@ -82,7 +81,7 @@ pub const DOUBLE_BLINK_FLASH_MS: Ms = 200;
 pub const LOW_BATTERY_PERIOD_MS: Ms = 60_000;
 /// The low-battery warning blinks for this long at the start of each
 /// [`LOW_BATTERY_PERIOD_MS`], and is dark for the rest of it.
-pub const LOW_BATTERY_BURST_MS: Ms = 5_000;
+pub const LOW_BATTERY_BURST_MS: Ms = 15_000;
 
 /// Time since `since`, or 0 when `now` is earlier: a clock that goes
 /// backwards must not produce a wrapped elapsed time.
@@ -149,8 +148,7 @@ fn blink(elapsed: Ms, color: Grb) -> Grb {
     }
 }
 
-/// The charging curve: a triangle from dark to `BREATH_PEAK` and back over
-/// one period (visually close enough to a cosine, and integer-only).
+/// Triangular charging brightness from dark to `BREATH_PEAK` and back.
 fn breath(elapsed: Ms) -> Grb {
     let t = elapsed % BREATH_PERIOD_MS;
     let half = BREATH_PERIOD_MS / 2;
@@ -170,7 +168,7 @@ fn double_blink_on(now: Ms) -> bool {
 
 /// The low-battery warning: double blinks during the first
 /// [`LOW_BATTERY_BURST_MS`] of every [`LOW_BATTERY_PERIOD_MS`], then dark until
-/// the next period starts (no wake-ups in between).
+/// the next period starts. Periods are aligned to boot time.
 fn low_battery_warning(now: Ms) -> Pick {
     let phase = now % LOW_BATTERY_PERIOD_MS;
     if phase < LOW_BATTERY_BURST_MS {
@@ -197,8 +195,8 @@ impl Indicator {
     }
 
     /// Pick the colour of both pixels and the earliest moment either changes
-    /// on its own (the next blink frame or a pulse end); `next_deadline` is
-    /// `None` when both are steady or off.
+    /// on its own, including the next low-battery warning after a dark interval.
+    /// `next_deadline` is `None` when neither pixel has a scheduled change.
     ///
     /// `now` must be the same clock the `Status::set_*` timestamps came from
     /// and must not run backwards; if it does, elapsed times clamp to zero.
@@ -602,12 +600,12 @@ mod inner_tests {
         let mut s = quiet();
         s.set_battery(Some(20));
         let ind = central();
-        // Inside the 5 s burst at the start of a minute.
+        // Inside the 15 s burst at the start of a minute.
         assert_eq!(inner(&ind, &s, 60_100), RED);
         assert_eq!(inner(&ind, &s, 60_300), OFF);
         assert_eq!(inner(&ind, &s, 60_500), RED);
         assert_eq!(inner(&ind, &s, 60_700), OFF);
-        assert_eq!(inner(&ind, &s, 64_100), RED, "last second of the burst");
+        assert_eq!(inner(&ind, &s, 74_100), RED, "last second of the burst");
         s.set_battery(Some(21));
         assert_eq!(inner(&ind, &s, 60_100), OFF);
         s.set_battery(Some(5));
@@ -620,11 +618,11 @@ mod inner_tests {
     }
 
     #[test]
-    fn low_battery_rests_for_the_remaining_fifty_five_seconds() {
+    fn low_battery_rests_for_the_remaining_forty_five_seconds() {
         let mut s = quiet();
         s.set_battery(Some(10));
         let ind = central();
-        assert_eq!(inner(&ind, &s, 65_100), OFF);
+        assert_eq!(inner(&ind, &s, 75_000), OFF);
         assert_eq!(inner(&ind, &s, 119_900), OFF);
         assert_eq!(
             inner(&ind, &s, 120_100),

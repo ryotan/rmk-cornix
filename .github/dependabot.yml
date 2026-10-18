@@ -1,7 +1,6 @@
 version: 2
 
-# Dependabot here is configured for security-update PRs only, as in ryotan/suzunari-error. Renovate (see
-# .github/renovate.json5) owns the regular version-bump flow with its 7-day cooldown.
+# Dependabot creates security-update PRs; Renovate handles regular version updates.
 #   - open-pull-requests-limit: 0
 #       Silences version-update PRs while still allowing security-update PRs (the limit does not apply to
 #       those; they are created when a GHSA advisory is published).

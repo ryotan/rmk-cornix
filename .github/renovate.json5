@@ -2,7 +2,7 @@
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
   // This repository is a GitHub fork, and Renovate skips forks unless told otherwise.
   forkProcessing: 'enabled',
-  // Review requests come from .github/CODEOWNERS, as in ryotan/suzunari-error.
+  // Review requests come from .github/CODEOWNERS.
   extends: [
     // `config:best-practices` bundles config:recommended + helpers:pinGitHubActionDigests + docker:pinDigests
     // + :configMigration + :pinDevDependencies + security:minimumReleaseAgeNpm + :maintainLockFilesWeekly

@@ -1,6 +1,6 @@
 name: 'Workflow Lint'
 
-# Keeps the workflows clean under zizmor, ghalint and pinact, as in ryotan/suzunari-error.
+# Check workflow definitions with zizmor, ghalint and pinact.
 #
 # The linters read only the workflows. The mise files are in the path filters because they pin the
 # linter versions.
@@ -65,7 +65,7 @@ jobs:
 
       - name: zizmor
         id: zizmor
-        # The default persona reports nothing on these files; auditor is what they were cleaned against.
+        # Include findings hidden by the default persona.
         run: zizmor --persona=auditor .github/workflows/
         continue-on-error: true
 

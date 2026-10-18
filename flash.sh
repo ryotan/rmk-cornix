@@ -6,7 +6,7 @@
 #
 # To flash a GitHub Actions build, download its UF2 files into firmware/ first:
 #   gh run download <run-id> -n rmk-cornix-uf2 -D firmware/
-# firmware/ also holds recovery images (the official firmware, pre-flash captures); never delete it.
+# firmware/ may also hold recovery images; preserve files other than the two build outputs.
 #
 # Connect the half over USB and put it into bootloader mode (double-tap the reset button, or for the
 # left half Vial > Security > Reboot to bootloader). left = central (rmk-cornix-central.uf2),
@@ -14,8 +14,7 @@
 #
 # The script waits for macOS to mount the bootloader drive (a volume named "cornix", in any letter
 # case, with INFO_UF2.TXT), copies the file onto it, and waits for the reboot into the new firmware.
-# If no drive appears although the keyboard is in bootloader mode, check ESET's device control: on
-# 2026-09-13 it blocked the mount.
+# If no drive appears in bootloader mode, check whether ESET device control blocks the mount.
 #
 # Bluetooth: `mise run build` and CI images carry a new BUILD_HASH, which makes RMK erase its storage
 # and bonds; the warning printed before flashing says what to do. The script cannot tell which kind
@@ -41,7 +40,8 @@ cat >&2 <<'WARN'
   and cannot reconnect until you forget the keyboard and pair again:
     macOS: System Settings > Bluetooth > Cornix > Forget This Device
   The two halves pair with each other again on their own.
-  An image from `cargo make uf2` alone keeps the bonds.
+  Using `cargo make uf2` alone does not guarantee bond retention:
+  the image's BUILD_HASH must match the installed firmware.
 ────────────────────────────────────────────────────────────────────────
 WARN
 
@@ -55,8 +55,8 @@ case $half in
 esac
 [[ -f $file ]] || { echo "missing $file (build it, or download a CI build: see the header)" >&2; exit 1; }
 
-# Only the cornix volume is accepted, so another UF2 board plugged in at the same time is never
-# flashed by mistake.
+# Only a volume named cornix with INFO_UF2.TXT is accepted. With both halves connected,
+# this does not identify which half is mounted; connect only the half being flashed.
 find_cornix_volume() {
   local v
   for v in /Volumes/*/; do
@@ -78,9 +78,8 @@ if [[ -z $vol ]]; then
 fi
 
 # The bootloader reboots as soon as the last block is written, so cp may report an I/O error at
-# the very end. That error is expected; the drive disappearing is the sign that the write
-# finished. If the drive is still there after REBOOT_TIMEOUT seconds, the write did not finish
-# (permissions, a full drive, a rejected image) and the script fails.
+# the very end. Disappearance is treated as the expected bootloader reboot, not as read-back
+# verification of the image. If the drive remains after REBOOT_TIMEOUT seconds, the script fails.
 REBOOT_TIMEOUT=30
 echo "found $vol: $(head -n 1 "$vol/INFO_UF2.TXT")"
 cp "$file" "$vol/" || echo "(cp reported an error; the bootloader usually reboots before cp returns)"

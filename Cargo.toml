@@ -10,8 +10,6 @@ license = "MIT OR Apache-2.0"
 [workspace]
 members = ["led"]
 
-# Dependencies follow rmk-template/nrf52840_split for RMK 0.9.
-# rmkit copies this file over the template's when building from keyboard.toml.
 [dependencies]
 rmk = { version = "=0.9.0", features = [
     "nrf52840_ble",
@@ -80,12 +78,11 @@ panic = 'unwind'
 
 [profile.release]
 codegen-units = 1       # better optimizations
-debug = false           # no overhead for bare-metal
+debug = false
 opt-level = "z"         # optimize for binary size
 overflow-checks = false
 lto = "fat"
 
-# rmk fork, branch ryotan/main: rmk-v0.9.0 plus the fixes merged there (User keys consume a pending
-# one-shot layer; a modifier's release waits while a tap-hold key is undecided). Cargo.lock pins the commit.
+# The fork provides modifier handling fixes and 1M PHY for the split link.
 [patch.crates-io]
-rmk = { git = "https://github.com/ryotan/rmk.git", branch = "ryotan/main" }
+rmk = { git = "https://github.com/ryotan/rmk.git", rev = "9ad8a8bc14a973ab8045a6a3e87b9c745c9c2aa6" }
