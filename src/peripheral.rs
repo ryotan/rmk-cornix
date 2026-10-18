@@ -26,8 +26,8 @@ mod keyboard_peripheral {
         config.sequence_load = SequenceLoad::Common;
         let pwm = SequencePwm::new_1ch(p.PWM0, p.P0_13, config).unwrap();
         let led_power = Output::new(p.P0_24, Level::Low, OutputDrive::Standard);
-        // Charger STAT assumed on P0.01 like the left half; unverified until a charge is observed.
-        let charge_stat = Input::new(p.P0_01, Pull::Up);
+        // Charger status input, active low.
+        let charge_stat = Input::new(p.P1_11, Pull::Up);
         Ws2812Driver::processor(pwm, led_power, Role::Peripheral, Some(charge_stat))
     }
 }
