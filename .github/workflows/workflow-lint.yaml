@@ -2,8 +2,7 @@ name: 'Workflow Lint'
 
 # Check workflow definitions with zizmor, ghalint and pinact.
 #
-# The linters read only the workflows. The mise files are in the path filters because they pin the
-# linter versions.
+# The linters read only the workflows. The mise files are in the path filters because they define the linters.
 on:
   push:
     branches:
@@ -11,6 +10,7 @@ on:
     paths: &lint-paths
       - '.github/workflows/**'
       - '.config/mise/config.toml'
+      - '.config/mise/config.ci-workflow-lint.toml'
       - '.config/mise/mise.lock'
   pull_request:
     branches:
@@ -31,6 +31,9 @@ jobs:
     name: 'Workflow Lint'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    env:
+      # Selects tools by file rather than install_args, so the cache key can hash them.
+      MISE_ENV: ci-workflow-lint
     steps:
       - name: Harden Runner
         # mise, the linters' release assets, and Sigstore for the attestation checks.
@@ -54,8 +57,9 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ~/.cache/mise/downloads-cas
-          # Per job, because the jobs install different tools (`install_args`).
-          key: mise-downloads-${{ github.job }}-${{ runner.os }}-${{ hashFiles('.config/mise/mise.lock') }}
+          key: >-
+            mise-downloads-${{ runner.os }}-${{ runner.arch }}-${{ env.MISE_ENV }}-${{
+            hashFiles('.config/mise/config*.toml', '.config/mise/mise*.lock') }}
 
       - name: Install the linters
         uses: jdx/mise-action@2d8d4cafcbd33be2ea37d2b6f5ad595363d1f1ca # v5.1.1
@@ -65,7 +69,6 @@ jobs:
           MISE_PARANOID: 'true'
         with:
           version: 2026.10.8
-          install_args: 'ghalint pinact zizmor'
           cache: false
 
       - name: ghalint
