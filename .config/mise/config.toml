@@ -54,7 +54,7 @@ lockfile_platforms = ["macos-arm64", "linux-x64"]
 prek = "0.5.5"                                              # runs .pre-commit-config.yaml (`prek install` once per clone)
 ghalint = "1.5.6"                                            # workflow linters, run by .github/workflows/workflow-lint.yaml
 pinact = "5.0.0"
-zizmor = "1.30.1"
+zizmor = "1.31.1"
 
 # On macOS, bindgen (nrf-sdc-sys) needs libclang; use the Command Line Tools copy unless LIBCLANG_PATH
 # is already set. On Linux the distro's libclang is found without help.
