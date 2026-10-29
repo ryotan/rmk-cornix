@@ -53,7 +53,7 @@ lockfile_platforms = ["macos-arm64", "linux-x64"]
 "github:xpack-dev-tools/arm-none-eabi-gcc-xpack" = "14.2.1-1.1"  # cc for the P-256 assembly in p256-cortex-m4-sys (via trouble-host)
 prek = "0.5.7"                                              # runs .pre-commit-config.yaml (`prek install` once per clone)
 ghalint = "1.5.6"                                            # workflow linters, run by .github/workflows/workflow-lint.yaml
-pinact = "5.0.0"
+pinact = "5.0.1"
 zizmor = "1.31.1"
 
 # On macOS, bindgen (nrf-sdc-sys) needs libclang; use the Command Line Tools copy unless LIBCLANG_PATH
