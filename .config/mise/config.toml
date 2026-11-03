@@ -52,7 +52,7 @@ lockfile_platforms = ["macos-arm64", "linux-x64"]
 "github:knurling-rs/flip-link" = "0.1.12"                    # the linker set in .cargo/config.toml
 "github:xpack-dev-tools/arm-none-eabi-gcc-xpack" = "14.2.1-1.1"  # cc for the P-256 assembly in p256-cortex-m4-sys (via trouble-host)
 prek = "0.5.7"                                              # runs .pre-commit-config.yaml (`prek install` once per clone)
-ghalint = "1.5.6"                                            # workflow linters, run by .github/workflows/workflow-lint.yaml
+ghalint = "1.5.7"                                            # workflow linters, run by .github/workflows/workflow-lint.yaml
 pinact = "5.0.2"
 zizmor = "1.31.1"
 
