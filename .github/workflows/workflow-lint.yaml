@@ -68,7 +68,7 @@ jobs:
           # with this variable.
           MISE_PARANOID: 'true'
         with:
-          version: 2026.10.23
+          version: 2026.10.24
           cache: false
 
       - name: ghalint
